@@ -151,8 +151,8 @@ end
 # SolutionsOrganiser::FoldersOrganiser.new.organise_solutions
 # SolutionsOrganiser::FoldersOrganiser.new(['sudoku_solved']).create_folders_structure
 #
-git_organiser = SolutionsOrganiser::GitOrganiser.new
-git_organiser.init
-git_organiser.commit_solutions
+# git_organiser = SolutionsOrganiser::GitOrganiser.new
+# git_organiser.init
+# git_organiser.commit_solutions
 #
-# SolutionsOrganiser::TestsRunner.new.run_tests
+SolutionsOrganiser::TestsRunner.new.run_tests
