@@ -149,14 +149,6 @@ class SolutionsOrganiser
 end
 
 # SolutionsOrganiser::FoldersOrganiser.new.organise_solutions
-solutions = [
-  'simplify_fraction',
-  'sort_fractions',
-  'nth_fib_lists',
-  'member_of_nth_fib_lists',
-  'goldbach',
-  'magic_square',
-]
 # SolutionsOrganiser::FoldersOrganiser.new(['sudoku_solved']).create_folders_structure
 #
 git_organiser = SolutionsOrganiser::GitOrganiser.new
