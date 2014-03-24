@@ -1,13 +1,19 @@
 import sys
 
-def main():
-    if len(sys.argv) > 1:
-        file = open(sys.argv[1], "r")
+
+def sum_numbers(argv):
+    if len(argv) > 1:
+        file = open(argv[1], "r")
         numbers = file.read().strip().split(" ")
         file.close()
-        print(sum(list(map(int, numbers))))
+
+        return sum(list(map(int, numbers)))
     else:
-        print("Please give a filename.")
+        return "Please give a filename."
+
+
+def main():
+    print(sum_numbers(sys.argv))
 
 if __name__ == '__main__':
     main()

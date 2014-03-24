@@ -23,7 +23,7 @@ class Cat2Test(unittest.TestCase):
         self.f2.write(self.content2)
         self.f2.close()
 
-    def test_cat_helper(self):
+    def test_cat2(self):
         self.assertEqual("There are no arguments.", cat2([]))
 
         expected_string1 = "Some content 1.\nSome content 2."
