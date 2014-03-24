@@ -1,14 +1,21 @@
 import sys
 
-def main():
-    if len(sys.argv) > 1:
-        for i in range(1, len(sys.argv)):
-            filename = sys.argv[i]
-            file = open(filename, "r")
-            print(file.read())
+
+def cat2(argv):
+    if len(argv) > 1:
+        content = ''
+        for i in range(1, len(argv)):
+            file = open(argv[i], "r")
+            content += file.read() + "\n"
             file.close()
+
+        return content.strip()
     else:
-        print("There are no arguments")
+        return "There are no arguments."
+
+
+def main():
+    print(cat2(sys.argv))
 
 if __name__ == '__main__':
     main()
