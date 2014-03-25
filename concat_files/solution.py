@@ -7,7 +7,7 @@ def concat_files(argv):
 
         content = ""
         for i in range(1, len(argv)):
-            file = open(sys.argv[i], "r")
+            file = open(argv[i], "r")
             content += file.read() + "\n"
             file.close()
 
