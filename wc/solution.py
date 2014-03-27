@@ -1,12 +1,13 @@
 import sys
 
-def main():
-    if len(sys.argv) > 2:
+
+def wc(argv):
+    if len(argv) > 2:
         commands = ["chars", "words", "lines"]
 
-        command = sys.argv[1]
+        command = argv[1]
         if command in commands:
-            file = open(sys.argv[2], "r")
+            file = open(argv[2], "r")
 
             if command == "chars":
                 contents = list(file.read())
@@ -15,11 +16,17 @@ def main():
             elif command == "lines":
                 contents = file.read().split("\n")
 
-            print(len(contents))
+            file.close()
+
+            return len(contents)
         else:
-            print ("The given command is not valid")
+            return "The given command is not valid"
     else:
-        print("Please give a command and a filename.")
+        return "Please give a command and a filename."
+
+
+def main():
+    print(wc(sys.argv))
 
 if __name__ == '__main__':
     main()
