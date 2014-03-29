@@ -19,22 +19,23 @@ class ConcatFilesTest(unittest.TestCase):
         self.f1.close()
 
     def test_concat_files(self):
-        self.assertEqual("Please give at least one filename.", concat_files([]))
+        self.assertTrue(not concat_files([]))
 
-        expected_string1 = "Some content 1.\n"
-        self.assertEqual(expected_string1, concat_files(['concat_files', 'test_file1']))
+        expected_string1 = "Some content 1."
+        self.assertTrue(concat_files(['concat_files', 'test_file1']))
         megatron = open('MEGATRON', 'r')
         content_megatron = megatron.read()
         megatron.close()
         self.assertEqual(expected_string1, content_megatron)
 
-        expected_string2 = "Some content 2.\nPython is an awesome language!\nYou should try it.\n"
-        self.assertEqual(expected_string2, concat_files(['concat_files', 'test_file2', 'file1.txt']))
+        expected_string2 = "Some content 2.\n\nPython is an awesome language!\nYou should try it."
+        self.assertTrue(concat_files(['concat_files', 'test_file2', 'file1.txt']))
 
         megatron = open('MEGATRON', 'r')
         content_megatron = megatron.read()
         megatron.close()
-        self.assertEqual("Some content 1.\n" + expected_string2, content_megatron)
+
+        self.assertEqual("Some content 1.\n\n" + expected_string2, content_megatron)
 
     def tearDown(self):
         os.remove('test_file1')

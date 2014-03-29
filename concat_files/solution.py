@@ -4,23 +4,29 @@ import sys
 def concat_files(argv):
     if len(argv) > 1:
         megatron = open("MEGATRON", "a+")
+        position = megatron.tell()
+        megatron.seek(0)
+        content_megatron = megatron.read()
 
-        content = ""
+        content = "" if not content_megatron else "\n\n"
+
         for i in range(1, len(argv)):
             file = open(argv[i], "r")
-            content += file.read() + "\n"
+            content += file.read() + "\n\n"
             file.close()
 
-        megatron.write(content)
+        megatron.seek(position)
+        megatron.write(content.rstrip())
         megatron.close()
 
-        return content
+        return True
     else:
-        return "Please give at least one filename."
+        return False
 
 
 def main():
-    print(concat_files(sys.argv))
+    if not (concat_files(sys.argv)):
+        print("Please give at least one filename.")
 
 if __name__ == '__main__':
     main()
