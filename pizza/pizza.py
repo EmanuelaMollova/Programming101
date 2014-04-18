@@ -3,6 +3,7 @@ from datetime import datetime
 import glob
 import decimal
 
+
 def round2(number):
     return round(decimal.Decimal(number), 2)
 
@@ -23,18 +24,18 @@ def take(orders, input_array):
 
 
 def orders_to_string(orders):
-    orders_array = []
+    orders_arr = []
     for key in sorted(orders):
-        orders_array.append("{} - {}".format(key, round2(str(sum(orders[key])))))
+        orders_arr.append("{} - {}".format(key, round2(str(sum(orders[key])))))
 
-    return "\n".join(orders_array) or False
+    return "\n".join(orders_arr) or False
 
 
 def status(orders):
     return orders_to_string(orders) or "There are no orders yet."
 
 
-def save(orders, time = time()):
+def save(orders, last_saved_state, time=time()):
     if not orders_to_string(orders):
         return "There are no orders to save."
 
@@ -44,30 +45,36 @@ def save(orders, time = time()):
     file.write(orders_to_string(orders))
     file.close()
 
+    last_saved_state = orders
+
     return "Saved the current order to {}".format(filename)
+
 
 def list_order_files():
     list = []
-    for index, file in glob.glob('orders_*'):
+    for file in sorted(glob.glob('orders_*')):
         list.append(file)
 
     return list
 
 
 def list_orders():
-    list = []
+    orders_list = []
+    order_files = list_order_files()
+    for index, file in enumerate(order_files):
+        orders_list.append("[{}] - {}".format(index + 1, file))
 
-    for key in list_order_files():
-        list.append("[{}] - {}".format(key, list[key]))
-
-    return "\n".join(list)
+    return "\n".join(orders_list)
 
 
-def load(last_command, number):
+def load(last_command, number, last_saved_state, orders):
     if last_command != "list":
-        print("Use list command before loading")
+        return "Use list command before loading"
     else:
-        print("Good")
+        if last_saved_state != orders and last_command != 'load':
+            return "You have not saved the current order.\nIf you wish to discard it, type load <number> again."
+        else:
+            orders = parse_orders_from_file()
 
 
 def finish(last_command):
@@ -112,10 +119,12 @@ def parse_orders_from_file(filename, orders):
 
 def execute_command(input_array, orders, last_command, last_saved_state):
     return {
-        'take': take(orders, input_array),
-        'status': status(orders),
-        'save': save(orders)
-    }[input_array[0]]
+        'take': lambda: take(orders, input_array),
+        'status': lambda: status(orders),
+        'save': lambda: save(orders, last_saved_state, time()),
+        'list': lambda: list_orders(),
+        'load': lambda: load(last_command, input_array, last_saved_state, orders)
+    }[input_array[0]]()
 
 
 def main():
@@ -130,32 +139,12 @@ def main():
         command = input_array[0]
 
         if command in all_commands:
-            print(execute_command(
-                input_array,
-                orders,
-                last_command,
-                last_saved_state)
-            )
+            print(execute_command(input_array, orders, last_command, last_saved_state))
         else:
             print(invalid_command())
 
         last_command = command
 
-        # if command == "take":
-        #     take(input_array, orders)
-        # elif command == "status":
-        #     status(orders)
-        # elif command == "save":
-        #     save(orders)
-        # elif command == "list":
-        #     list_files = list_orders()
-        # elif command == "load":
-        #     load(last_command, 1)
-        # elif command == "finish":
-        #     if finish(last_command):
-        #         break
-        # else:
-        #     print(invalid_command())
 
 if __name__ == '__main__':
     main()
