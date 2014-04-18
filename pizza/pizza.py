@@ -67,54 +67,66 @@ def list_orders():
     return "\n".join(orders_list)
 
 
-def load(last_command, number, last_saved_state, orders):
-    if last_command != "list":
+def load(last_command, input_array, last_saved_state, orders):
+    if len(input_array) == 2:
+        number = int(input_array[1])
+    else:
+        return "Invalid command! Try load <number>"
+
+    if last_command not in ["list", 'load']:
         return "Use list command before loading"
     else:
         if last_saved_state != orders and last_command != 'load':
-            return "You have not saved the current order.\nIf you wish to discard it, type load <number> again."
+            return (
+                "You have not saved the current order.\n"
+                "If you wish to discard it, type load <number> again."
+            )
         else:
-            orders = parse_orders_from_file()
+            order_files = list_order_files()
+            if len(order_files) < number:
+                return "There is no such file"
+            else:
+                orders.clear()
+                orders.update(parse_orders_from_file(order_files[number - 1]))
+                return True
 
 
-def finish(last_command):
-    if last_command == "finish":
-        print("Finishing order. Goodbye!")
-        return True
-    else:
-        print("Confirm")
-        return False
-
-
-def invalid_command():
-    messages = [
-        "Unknown command!",
-        "Try one of the following:",
-        "take <name> <price>",
-        "status",
-        "save",
-        "list",
-        "load <number>",
-        "finish",
-        "Enter command>"
-    ]
-
-    return "\n".join(messages)
-
-
-def check__for_unsaved_changes():
-    pass
-
-
-def parse_orders_from_file(filename, orders):
+def parse_orders_from_file(filename):
     orders = {}
     file = open(filename, "r")
 
     for line in file:
-        order = line.split(" - ")
-        orders[order[1]] = [order[2]]
+        order = line.strip().split(" - ")
+        orders[order[0]] = [float(order[1])]
+
+    file.close()
 
     return orders
+
+
+def finish(last_command, last_saved_state, orders):
+    if last_command == "finish" or last_saved_state == orders:
+        return "Finishing order. Goodbye!"
+    else:
+        return (
+            "You have not saved your order.\n"
+            "If you wish to continue, type finish again.\n"
+            "If you want to save your order, type save"
+        )
+
+
+def invalid_command():
+    return (
+        "Unknown command!\n"
+        "Try one of the following:\n"
+        "take <name> <price>\n"
+        "status\n"
+        "save\n"
+        "list\n"
+        "load <number>\n"
+        "finish\n"
+        "Enter command\n>"
+    )
 
 
 def execute_command(input_array, orders, last_command, last_saved_state):
@@ -123,7 +135,9 @@ def execute_command(input_array, orders, last_command, last_saved_state):
         'status': lambda: status(orders),
         'save': lambda: save(orders, last_saved_state, time()),
         'list': lambda: list_orders(),
-        'load': lambda: load(last_command, input_array, last_saved_state, orders)
+        'load': lambda: load(
+            last_command, input_array, last_saved_state, orders
+        )
     }[input_array[0]]()
 
 
@@ -139,7 +153,9 @@ def main():
         command = input_array[0]
 
         if command in all_commands:
-            print(execute_command(input_array, orders, last_command, last_saved_state))
+            print(execute_command(
+                input_array, orders, last_command, last_saved_state)
+            )
         else:
             print(invalid_command())
 
